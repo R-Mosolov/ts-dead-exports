@@ -1,4 +1,4 @@
-const fs = require("fs");
+const { readdir, rename, readFileSync } = require("fs");
 
 class App {
   setInput() {
@@ -19,7 +19,9 @@ class App {
   }
 
   startMainOperation({ tsxOldPath, tsxNesPath, pathWithoutExt }) {
-    fs.rename(tsxOldPath, tsxNesPath, async () => {
+    this.getRepoHighLevelStructure();
+
+    rename(tsxOldPath, tsxNesPath, async () => {
       console.log("STEP 1. Extension was changed");
 
       const readTxt = this.readTxt(pathWithoutExt);
@@ -32,8 +34,22 @@ class App {
     });
   }
 
+  getRepoHighLevelStructure() {
+    readdir(".", { withFileTypes: true }, (err, files) => {
+      if (err) {
+        console.log(err);
+      } else {
+        const fileNames = files.map(({ name }) => name);
+        const dirName = fileNames.filter((item) => !item.includes("."));
+
+        console.log("STEP 0.1. Get full root structure:", fileNames);
+        console.log("STEP 0.2. Get full root structure (dirs only):", dirName);
+      }
+    });
+  }
+
   readTxt(pathWithoutExt) {
-    const readTxt = fs.readFileSync(`${pathWithoutExt}.txt`, "utf-8");
+    const readTxt = readFileSync(`${pathWithoutExt}.txt`, "utf-8");
 
     console.log("STEP 2. Read txt:", readTxt);
 
@@ -70,7 +86,7 @@ class App {
   }
 
   restoreExtension(tsxNesPath, tsxOldPath) {
-    fs.rename(tsxNesPath, tsxOldPath, () => {
+    rename(tsxNesPath, tsxOldPath, () => {
       console.log("STEP 6. Extension was restored");
     });
   }

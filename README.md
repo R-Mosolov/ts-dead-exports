@@ -24,3 +24,6 @@ The main minuses of solutions above:
 1. Modules written in TS support.
 1. Output by all paths with dead types.
 1. Output by all dead types with its names.
+1. Auto detection of directories.
+1. Flexible logging support.
+1. Recursion usage to delete restriction of searching levels.
